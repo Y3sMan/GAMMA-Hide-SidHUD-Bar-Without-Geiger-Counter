@@ -124,14 +124,14 @@ function override()
         if not isGeiger then
             -- debug("starting to hide rad bar")
             if not IsBarHidden then
-                debug("hiding rad bar")
+                -- debug("hiding rad bar")
                 ui_sidhud_mcm.deactivate_hud()
                 IsBarHidden = true
             end
         elseif isGeiger then
             -- debug("starting to show rad bar")
             if IsBarHidden then
-                debug("showing rad bar")
+                -- debug("showing rad bar")
                 ui_sidhud_mcm.activate_hud()
                 IsBarHidden = false
             end
@@ -153,11 +153,6 @@ function load_state(m_data)
         IsBarHidden = hideradbar.IsBarHidden or false
         ENABLED = hideradbar.ENABLED or true
 
-        if ENABLED then
-            override()
-        else
-            destroy()
-        end
 
 		printdbg("# LOADING: Hide Rad Bar | IsBarHidden: %s",tostring(IsBarHidden))
 		printdbg("# LOADING: Hide Rad Bar | ENABLED: %s",tostring(ENABLED))
@@ -176,13 +171,23 @@ function save_state(m_data)
     end
 end
 
+function on_first_update()
+    if ENABLED then
+        override()
+    else
+        destroy()
+    end
+end
+
 function on_game_start()
     _eval_geiger_requirement = msv_over_radiation_status_mcm.eval_geiger_requirement
+    if not ui_sidhud_mcm then return end
 
 	RegisterScriptCallback("load_state",load_state)
 	RegisterScriptCallback("save_state",save_state)
+	RegisterScriptCallback("actor_on_first_update",on_first_update)
  --   if ENABLED and ui_sidhud_mcm  then
-        override()
+        -- override()
   --  end
 end
 
